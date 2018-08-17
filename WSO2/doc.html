@@ -1,0 +1,584 @@
+<p>This page describes how you can configure and test OIDC Encrypted ID Token with Identity Server 5.5.0 </p>
+<p>
+  <ac:structured-macro ac:macro-id="7fdee1ec-a820-4585-b497-0eb346efe960" ac:name="toc" ac:schema-version="1">
+    <ac:parameter ac:name="maxLevel">4</ac:parameter>
+    <ac:parameter ac:name="minLevel">3</ac:parameter>
+  </ac:structured-macro>
+</p>
+<h3>Setup Playground Sample</h3>
+<p>First, you should <ac:link>
+    <ri:page ri:content-title="Basic Client Profile with Playground"/>
+    <ac:plain-text-link-body><![CDATA[setup the Playground sample app]]></ac:plain-text-link-body>
+  </ac:link>.  </p>
+<h3>
+  <span style="color: rgb(0,0,0);">Configuring the service provider</span>
+</h3>
+<p>The next step is to <ac:link>
+    <ri:page ri:content-title="Adding and Configuring a Service Provider" ri:space-key="IS530"/>
+    <ac:plain-text-link-body><![CDATA[configure the service provider.]]></ac:plain-text-link-body>
+  </ac:link>
+</p>
+<h3>
+  <span>Configuring Service Provider Public Certificate</span>
+</h3>
+<p>The following steps describe how to configure a service provider public certificate:</p>
+<ol>
+  <li>
+    <p>Create a new keystore.</p>
+    <ac:structured-macro ac:macro-id="847d1c31-bdc8-4ca3-8674-9115dc28c157" ac:name="code" ac:schema-version="1">
+      <ac:plain-text-body><![CDATA[keytool -genkey -alias wso2carbon -keyalg RSA -keysize 2048 -keystore testkeystore.jks -dname "CN=*.test.com,OU=test,O=test,L=MPL,ST=MPL,C=FR" -storepass wso2carbon -keypass wso2carbon -validity 10950]]></ac:plain-text-body>
+    </ac:structured-macro>
+  </li>
+  <li>
+    <p>Export public key of the new keystore to a file with the name of client-id of oauth application.</p>
+    <ac:structured-macro ac:macro-id="e7f03b2f-2f86-448b-8ede-2de979d15c19" ac:name="code" ac:schema-version="1">
+      <ac:plain-text-body><![CDATA[keytool -export -alias wso2carbon -file <client-id> -keystore testkeystore.jks]]></ac:plain-text-body>
+    </ac:structured-macro>
+  </li>
+  <li>
+    <p>Get the cert in X509 format.</p>
+    <ac:structured-macro ac:macro-id="b03d1729-c162-466a-8152-9f86cfa357f4" ac:name="code" ac:schema-version="1">
+      <ac:plain-text-body><![CDATA[keytool -printcert -rfc -file <client-id>]]></ac:plain-text-body>
+    </ac:structured-macro>
+    <p>You will see the public certificate in X509 format in the console. Copy the content of the certificate. (Sample output given below)</p>
+    <ac:structured-macro ac:macro-id="2376f16e-e09a-4b76-8d53-0450324d8a08" ac:name="code" ac:schema-version="1">
+      <ac:plain-text-body><![CDATA[-----BEGIN CERTIFICATE-----
+MIIDVzCCAj+gAwIBAgIETCZA8zANBgkqhkiG9w0BAQsFADBcMQswCQYDVQQGEwJG
+UjEMMAoGA1UECBMDTVBMMQwwCgYDVQQHEwNNUEwxDTALBgNVBAoTBHRlc3QxDTAL
+BgNVBAsTBHRlc3QxEzARBgNVBAMMCioudGVzdC5jb20wHhcNMTgwMjE0MDYzNjE3
+WhcNNDgwMjA3MDYzNjE3WjBcMQswCQYDVQQGEwJGUjEMMAoGA1UECBMDTVBMMQww
+CgYDVQQHEwNNUEwxDTALBgNVBAoTBHRlc3QxDTALBgNVBAsTBHRlc3QxEzARBgNV
+BAMMCioudGVzdC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCz
+Gc/BcXCiIagLhXs1g90H+PbfZyXLzwFJ+YmsKMikcffhyopDD+fnFjHb1+XXSnUh
+4XzQlFba6m2vIOK8uquMhZKMv/E7Vxkl/ADTuw/BgpZRut4p88Fn8OWZlrJfoi3o
+hvgfxSMratvxLMp1Qe0BzjwoBDB9r+h9pj8kCpHC824eUGIR0FZsW9lnoJP2LegL
+nAcOJuNBoeWC0wwNu0sgIJwjsKp3G3glm8B4GdZvbF8aW1QRAk36sh8+0GXrRnAz
+aGcRAqt7CjeZmt5Dsuy0lfp5i1xf5myPOH7MwKHqQQ56Wu9O479NdDVLkJ0xne2r
+ZTCwMeGhQQH5hI+SYlxjAgMBAAGjITAfMB0GA1UdDgQWBBTzS+bja//25xb+4wcP
+gMN6cJZwoDANBgkqhkiG9w0BAQsFAAOCAQEAdhZ8romzQQKF9c8tJdIhUS4i7iJh
+oSjBzN+Ex9+OJcW6ubcLb8pai/J3hcvMadAybR1A17FkETLFmG9HkuEN9o2jfU7c
+9Yz5d0pqO8qNKXSqHky5c+zA4vzLZGsgKyDZ5a0p9Qpsat3wnA3UGZPRoVGV5153
+Mb0J1n1uubxGobEEzR2BXaKO9YEWAMQwGRdQCGBaIeGUOpqSUJMLYirDXL03je3g
+mYzWclLTEHpIYy+a66tmF9uTGgyys33LPm2pQ+kWd8FikWolKKBqp+IPU5QdUQi1
+DdFHsyNqrnms6EOQAY57Vnf91RyS7lnO1T/lVR6SDk9+/KDBEL1b1cy7Dg==
+-----END CERTIFICATE-----]]></ac:plain-text-body>
+    </ac:structured-macro>
+  </li>
+  <li>
+    <p>Navigate to service provider.</p>
+  </li>
+  <li>
+    <p>
+      <strong>Edit</strong> and paste the certificate content copied in the above step and Click <strong>Update</strong>.</p>
+    <p>
+      <span>
+        <span style="color: rgb(0,0,0);">
+          <ac:image ac:width="700">
+            <ri:url ri:value="https://lh4.googleusercontent.com/LVqvv5edo4c0uObNQC-MUOjRsGE7OWKqAJ5Y07K_G8BBSFDtYIs1ikBr1sn_C-EhvLQL0LzO7NFuozZqZMMKq0cY1FcZNfx_QlFdzsEdtFk-d1JVJwX-PAG_tdOaZ29RePIb7Q7Z"/>
+          </ac:image>
+        </span>
+      </span>
+    </p>
+  </li>
+</ol>
+<p>
+  <br/>
+</p>
+<h3>Enable ID Token Encryption</h3>
+<p>Follow the below steps to enable ID Token Encryption:</p>
+<ol>
+  <li>
+    <p>Navigate to <strong>Service Provider &gt; Inbound Authentication Configuration &gt; OAuth/OpenID Connect Configuration</strong> and Click <strong>Edit</strong>.</p>
+  </li>
+  <li>
+    <p>Click <strong>Enable ID Token Encryption</strong> to enable id_token encryption.</p>
+    <p>
+      <span>
+        <span style="color: rgb(0,0,0);">
+          <ac:image ac:height="319" ac:width="624">
+            <ri:url ri:value="https://lh3.googleusercontent.com/fTgOYUsQm5aNW2jqjOBqOYppBPwlX0SaL4vmym2a5KZNf1NCgmnco8gU4Y0mQELCyPwZdDA_PThdqq3_heS9uXcg_GG1E7U9U9A7O6QzaTDAbj4YOcpwPnCnosMEXnpQ6GVWf24n"/>
+          </ac:image>
+        </span>
+      </span>
+    </p>
+  </li>
+</ol>
+<h3>Testing the flow - Authorization Code Grant Type </h3>
+<ol>
+  <li>
+    <p>Visit the URL <a href="http://wso2is.local:8080/playground2/oauth2.jsp">http://wso2is.local:8080/playground2/oauth2.jsp</a> to start the application.</p>
+  </li>
+  <li>
+    <p>Enter the following details and click <strong>Authorize</strong>.</p>
+    <ul>
+      <li>
+        <strong>Authorization Grant Type:</strong> Authorization Code</li>
+      <li>
+        <strong>Client ID:</strong> (the client id received at the application registration step in Identity Server)</li>
+      <li>
+        <strong>Scope:</strong>openid (This scope is a requirement to provide user information. Any token without this scope will not be allowed to access user information.)</li>
+      <li>
+        <strong>Callback URL:</strong>
+        <a class="external-link" href="http://wso2is.local:8080/playground2/oauth2client" rel="nofollow">http://wso2is.local:8080/playground2/oauth2client</a>
+      </li>
+      <li>
+        <strong>Authorize Endpoint:</strong>
+        <a class="external-link" href="https://localhost:9443/oauth2/authorize" rel="nofollow">https://localhost:9443/oauth2/authorize</a>
+      </li>
+    </ul>
+    <p>
+      <ac:image ac:height="348" ac:width="624">
+        <ri:url ri:value="https://lh6.googleusercontent.com/avE_JhfPaoWun4nkoLBqBhDDMZtKvB98sAkMGvZftJtb0GDdWLgoic6aqdiSNLz4feEVYbwv2rj4TYMzu91Vsv2d5pymph0vttEwGTnu-r7DziDbL-ajjLF20sL8ZSv3Xe1RBGqU"/>
+      </ac:image>
+    </p>
+  </li>
+  <li>
+    <p>Log in with the user credentials.<br/>
+      <span>
+        <span style="color: rgb(0,0,0);">
+          <ac:image ac:alt="2.png" ac:height="288" ac:width="330">
+            <ri:url ri:value="https://lh6.googleusercontent.com/rwIJbyvfvoveYTPtoC5jQkKT7EwkSutImdUtWM8JDKCcTpqRmCfoSPp5EEBT07aZuVyBISkh4NcvTN3D-TcSoc8SQJYRnBnOh-gXHxrE5Ar6vgX45gYwTo0I6xjUjwCz3gkGlLZv"/>
+          </ac:image>
+        </span>
+      </span>
+    </p>
+    <p>
+      <br/>
+    </p>
+  </li>
+  <li>
+    <p>Click <strong>Approve</strong> to consent to this action.</p>
+    <p>
+      <span>
+        <span style="color: rgb(0,0,0);">
+          <span style="color: rgb(0,0,0);">
+            <ac:image ac:alt="3.png" ac:width="350">
+              <ri:url ri:value="https://lh4.googleusercontent.com/f2hXHwqkXjsPEd0A2sq9cIhCBm4_i2LhaJB172f16RjBsXHDpQqylS92Wn4OQ8Yi0Ib6XwsIsWhas9zFh97XznmCVT87BsXYehaWDvxNApyqxnCadzX5F9HppOb6nRjuULaqXgSl"/>
+            </ac:image>
+          </span>
+        </span>
+      </span>
+    </p>
+  </li>
+  <li>Provide the following details and click <strong>Get Access Token</strong>.<br/>
+    <ul>
+      <li>
+        <strong>Callback URL: </strong>
+        <a class="external-link" href="http://wso2is.local:8080/playground2/oauth2client" rel="nofollow">http://wso2is.local:8080/playground2/oauth2client</a>
+      </li>
+      <li>
+        <strong>Access Token Endpoint:</strong>
+        <a class="external-link" href="https://localhost:9443/oauth2/token" rel="nofollow">https://localhost:9443/oauth2/token</a>
+      </li>
+      <li>
+        <strong>Client Secret:</strong> (client secret received at the application registration)</li>
+    </ul>
+  </li>
+</ol>
+<ac:structured-macro ac:macro-id="5e83cccc-2bde-48d5-bd1e-9b69e397394e" ac:name="note" ac:schema-version="1">
+  <ac:rich-text-body>
+    <p>If you have configured the service provider in a tenant, you have to add the tenant domain as a query parameter to the access token endpoint. If the tenant domain is<a href="http://wso2.com/"> wso2.com</a>, access token endpoint will be as:<a href="https://localhost:9443/oauth2/token?tenantDomain=wso2.com"> https://localhost:9443/oauth2/token?tenantDomain=wso2.com</a>
+    </p>
+  </ac:rich-text-body>
+</ac:structured-macro>
+<p style="margin-left: 30.0px;">
+  <span>
+    <span style="color: rgb(0,0,0);">
+      <ac:image ac:height="279" ac:width="624">
+        <ri:url ri:value="https://lh4.googleusercontent.com/z2fKWuE7oIW_G8W5pMqNyJZ4jY5djIdZr6D6lpW0bVOviTciODaI333FKSYvfGQkg3cMsQk5f2G56RgTDbPG69QKyt8tJ0o8fIURRCxQyYJ0qMsdY4Rek6Rtbg5mxypqHYGL-u9e"/>
+      </ac:image>
+    </span>
+  </span>
+</p>
+<ol>
+  <li>At this point, the application receives the Access Token and Encrypted ID Token.</li>
+</ol>
+<p style="margin-left: 30.0px;">
+  <span>
+    <span style="color: rgb(0,0,0);">
+      <ac:image ac:height="505" ac:width="624">
+        <ri:url ri:value="https://lh4.googleusercontent.com/kaFW-O3h0Ua7bst9Ju2s4145epRfCDVO4yAo8X-9FtMfASIbM633Eml1LFVZM7w1z34d1ce7XtkSaX_3_ufMoj0ieM9i-nPi92d9cvFVcnVvWjrhdzbsCq029Ri03G0Bl5pPt8Kp"/>
+      </ac:image>
+    </span>
+  </span>
+</p>
+<ol>
+  <li>
+    <p>In order to decrypt the ID Token, you need to provide the private key of the client.</p>
+    <div>
+      <p>
+        <br/>
+      </p>
+      <ac:structured-macro ac:macro-id="8bd562df-15ed-44a2-8025-07ea279795f6" ac:name="expand" ac:schema-version="1">
+        <ac:parameter ac:name="title">Click here to know how to Obtain the Service Provider Private Key</ac:parameter>
+        <ac:rich-text-body>
+          <ol>
+            <li>
+              <p>
+                <span style="color: rgb(0,0,0);">Import JKS into a PKCS12 formatted store.</span>
+              </p>
+              <ac:structured-macro ac:macro-id="0b9b89d0-87b1-4965-933f-9bb0b93c78b3" ac:name="code" ac:schema-version="1">
+                <ac:plain-text-body><![CDATA[keytool -importkeystore -srckeystore testkeystore.jks -destkeystore testkeystore.p12 -srcstoretype JKS -deststoretype PKCS12 -srcstorepass wso2carbon -deststorepass wso2carbon -srcalias wso2carbon -destalias wso2carbon -srckeypass wso2carbon -destkeypass wso2carbon]]></ac:plain-text-body>
+              </ac:structured-macro>
+            </li>
+            <li>
+              <p>
+                <span style="color: rgb(0,0,0);">Extract the private key into a file named “key.pem”.</span>
+              </p>
+              <ac:structured-macro ac:macro-id="7e5038a6-eb48-499f-aafb-113d5a7561fd" ac:name="code" ac:schema-version="1">
+                <ac:plain-text-body><![CDATA[openssl pkcs12 -in testkeystore.p12 -out key.pem -passin pass:wso2carbon -passout pass:wso2carbon -nodes -nocerts]]></ac:plain-text-body>
+              </ac:structured-macro>
+            </li>
+            <li>
+              <p>
+                <span style="color: rgb(0,0,0);">Open the created key.pem file using a text editor and you will see the extracted private key. </span>
+              </p>
+            </li>
+            <li>
+              <p>
+                <span style="color: rgb(0,0,0);">Copy only the key string as shown in the below sample.</span>
+              </p>
+              <p>
+                <span style="color: rgb(0,0,0);">
+                  <ac:image ac:width="600">
+                    <ri:attachment ri:filename="image2018-2-16_14-8-33.png"/>
+                  </ac:image>
+                </span>
+              </p>
+            </li>
+          </ol>
+        </ac:rich-text-body>
+      </ac:structured-macro>
+    </div>
+  </li>
+  <li>
+    <p>Paste the copied private key in Client Private Key text area.</p>
+    <p>
+      <span>
+        <span style="color: rgb(0,0,0);">
+          <ac:image ac:height="505" ac:width="624">
+            <ri:url ri:value="https://lh3.googleusercontent.com/NbPNkE4DnohhN_zniEZxhHnIdiI5nKSx-TCcbRJ5zqHDvZs1WejB_8jJ31aLe8mOlI1sDwnriVFbvPNJUplJDf1Y3Hfmr9fVGAQYIQdmaPa5NxzrdsCu7oFwsKuYbm5F29GEzMGw"/>
+          </ac:image>
+        </span>
+      </span>
+    </p>
+  </li>
+  <li>
+    <p>
+      <span style="color: rgb(0,0,0);">Click </span>
+      <strong>Decrypt</strong>
+      <span style="color: rgb(0,0,0);"> and the decrypted ID Token details will be displayed.</span>
+      <br/>
+      <ac:image ac:height="507" ac:width="624">
+        <ri:url ri:value="https://lh3.googleusercontent.com/mExsx2HD1oVvdAsQ83xTXSwurBdFctRPdZBzNykBrzjsGP27JwjohIOnSQEjOSlUYw2XArlOr-rzUqfm9-1xNiPg_JfQqHhIW2Nm8NLBFb7r8NmQegxNtFVgofZgrGj6v9FTQqeS"/>
+      </ac:image>
+    </p>
+  </li>
+</ol>
+<h3>Testing the flow - Implicit Grant Type </h3>
+<ol>
+  <li>
+    <p>Before you begin, you must first <a href="https://docs.wso2.com/display/IS530/Setting+Up+the+Sample+Webapp">set up the sample webapp.</a>
+    </p>
+  </li>
+  <li>
+    <p>Visit the URL <a href="http://wso2is.local:8080/playground2/oauth2.jsp">http://wso2is.local:8080/playground2/oauth2.jsp</a> to start the application.</p>
+  </li>
+  <li>
+    <p>Enter the following details and click <strong>Authorize</strong>.</p>
+    <ol>
+      <li>
+        <p>
+          <span>Authorization Grant Type: Implicit</span>
+        </p>
+      </li>
+      <li>
+        <p>
+          <span>Client ID: (the client id received at the application registration)</span>
+        </p>
+      </li>
+      <li>
+        <p>Scope:openid</p>
+      </li>
+      <li>
+        <p>
+          <span>Callback URL:<a href="http://wso2is.local:8080/playground2/oauth2client"> http://wso2is.local:8080/playground2/oauth2client</a>
+          </span>
+        </p>
+      </li>
+      <li>
+        <p>Authorize Endpoint:<a href="https://localhost:9443/oauth2/authorize"> https://localhost:9443/oauth2/authorize</a>
+        </p>
+      </li>
+    </ol>
+    <span>
+      <span style="color: rgb(17,85,204);">
+        <ac:image ac:height="385" ac:width="624">
+          <ri:url ri:value="https://lh3.googleusercontent.com/zAmZ3DE8q19sIymBJbT24rAKpEgFH22W1Rl14SlRQhqJb2XwyM3VwNBuFQpxjfmU61v1or77fwN8myBaqca_Ap0nyVpqHNHudkp-AlnE5vG8ia1n4ReNUiBxQZ_obdM-OOUV5KE-"/>
+        </ac:image>
+      </span>
+    </span>
+  </li>
+  <li>
+    <p>Log in with the user credentials.<br/>
+      <span>
+        <span style="color: rgb(0,0,0);">
+          <ac:image ac:alt="2.png" ac:height="288" ac:width="330">
+            <ri:url ri:value="https://lh6.googleusercontent.com/rwIJbyvfvoveYTPtoC5jQkKT7EwkSutImdUtWM8JDKCcTpqRmCfoSPp5EEBT07aZuVyBISkh4NcvTN3D-TcSoc8SQJYRnBnOh-gXHxrE5Ar6vgX45gYwTo0I6xjUjwCz3gkGlLZv"/>
+          </ac:image>
+        </span>
+      </span>
+    </p>
+  </li>
+  <li>Click <strong>Approve</strong> to consent to this action.<br/>
+    <span>
+      <span style="color: rgb(0,0,0);">
+        <ac:image ac:alt="3.png" ac:width="400">
+          <ri:url ri:value="https://lh4.googleusercontent.com/f2hXHwqkXjsPEd0A2sq9cIhCBm4_i2LhaJB172f16RjBsXHDpQqylS92Wn4OQ8Yi0Ib6XwsIsWhas9zFh97XznmCVT87BsXYehaWDvxNApyqxnCadzX5F9HppOb6nRjuULaqXgSl"/>
+        </ac:image>
+      </span>
+    </span>
+  </li>
+  <li>At this point, the application receives the Access Token and the encrypted ID Token.<br/>
+    <span>
+      <span style="color: rgb(0,0,0);">
+        <ac:image ac:height="424" ac:width="624">
+          <ri:url ri:value="https://lh3.googleusercontent.com/Treg3sSDH0Z8kF2D4E6HU15sNWp6iMOzirfcs_x0cXCaaHmY9ZYyjzbXfndvZdFi1UPt4_UntalL9jraY612vaxbHDpRfd2BjxHHDcXkCnt9cnXcQ9NXEY69Wln2AeGauDdMUFLx"/>
+        </ac:image>
+      </span>
+    </span>
+  </li>
+  <li>
+    <p>In order to decrypt the ID Token, you need to provide the private key of the client.</p>
+    <ac:structured-macro ac:macro-id="6b566f7e-bd2f-498e-a8a9-1edfb1e6ee66" ac:name="expand" ac:schema-version="1">
+      <ac:parameter ac:name="title">Click here to know how to Obtain the Service Provider Private Key</ac:parameter>
+      <ac:rich-text-body>
+        <ol>
+          <li>
+            <p>
+              <span style="color: rgb(0,0,0);">JKS into a PKCS12 formatted store.</span>
+            </p>
+            <ac:structured-macro ac:macro-id="89e3ac5c-ce3d-4028-88a5-0ee767edf385" ac:name="code" ac:schema-version="1">
+              <ac:plain-text-body><![CDATA[keytool -importkeystore -srckeystore testkeystore.jks -destkeystore testkeystore.p12 -srcstoretype JKS -deststoretype PKCS12 -srcstorepass wso2carbon -deststorepass wso2carbon -srcalias wso2carbon -destalias wso2carbon -srckeypass wso2carbon -destkeypass wso2carbon]]></ac:plain-text-body>
+            </ac:structured-macro>
+          </li>
+          <li>
+            <p>
+              <span style="color: rgb(0,0,0);">Extract the private key into a file named “key.pem”.</span>
+            </p>
+            <ac:structured-macro ac:macro-id="310032c9-e9b9-4862-81e8-dd567b69a5eb" ac:name="code" ac:schema-version="1">
+              <ac:plain-text-body><![CDATA[openssl pkcs12 -in testkeystore.p12 -out key.pem -passin pass:wso2carbon -passout pass:wso2carbon -nodes -nocerts]]></ac:plain-text-body>
+            </ac:structured-macro>
+          </li>
+          <li>
+            <p>
+              <span style="color: rgb(0,0,0);">Open the created key.pem file using a text editor and you will see the extracted private key. </span>
+            </p>
+          </li>
+          <li>
+            <p>
+              <span style="color: rgb(0,0,0);">Copy only the key string as shown in the below sample.</span>
+            </p>
+            <p>
+              <span style="color: rgb(0,0,0);">
+                <ac:image ac:width="600">
+                  <ri:attachment ri:filename="image2018-2-16_14-8-33.png"/>
+                </ac:image>
+              </span>
+            </p>
+            <p>
+              <span style="color: rgb(0,0,0);">
+                <br/>
+              </span>
+            </p>
+          </li>
+        </ol>
+      </ac:rich-text-body>
+    </ac:structured-macro>
+    <p>
+      <span style="color: rgb(0,0,0);font-family: Arial , Verdana , Helvetica , sans-serif;font-weight: bold;"> </span>
+    </p>
+  </li>
+  <li>
+    <p>Paste the copied private key in Client Private Key text area.</p>
+    <p>
+      <ac:image ac:height="505" ac:width="624">
+        <ri:url ri:value="https://lh3.googleusercontent.com/NbPNkE4DnohhN_zniEZxhHnIdiI5nKSx-TCcbRJ5zqHDvZs1WejB_8jJ31aLe8mOlI1sDwnriVFbvPNJUplJDf1Y3Hfmr9fVGAQYIQdmaPa5NxzrdsCu7oFwsKuYbm5F29GEzMGw"/>
+      </ac:image>
+    </p>
+    <p>
+      <br/>
+    </p>
+  </li>
+  <li>
+    <p>
+      <span style="color: rgb(0,0,0);">Click </span>
+      <strong>Decrypt</strong>
+      <span style="color: rgb(0,0,0);"> and the decrypted ID Token details will be displayed.</span>
+    </p>
+    <p>
+      <span style="color: rgb(0,0,0);">
+        <ac:image ac:height="507" ac:width="624">
+          <ri:url ri:value="https://lh3.googleusercontent.com/mExsx2HD1oVvdAsQ83xTXSwurBdFctRPdZBzNykBrzjsGP27JwjohIOnSQEjOSlUYw2XArlOr-rzUqfm9-1xNiPg_JfQqHhIW2Nm8NLBFb7r8NmQegxNtFVgofZgrGj6v9FTQqeS"/>
+        </ac:image>
+        <br/>
+      </span>
+    </p>
+  </li>
+</ol>
+<div>
+  <h3>Testing the flow - Password Grant Type </h3>
+  <div>
+    <ol>
+      <li>
+        <p>Before you begin, you must first <a href="https://docs.wso2.com/display/IS530/Setting+Up+the+Sample+Webapp">set up the sample webapp.</a>
+        </p>
+      </li>
+      <li>
+        <p>Visit the URL <a href="http://wso2is.local:8080/playground2/oauth2.jsp">http://wso2is.local:8080/playground2/oauth2.jsp</a> to start the application.</p>
+      </li>
+      <li>
+        <p>Enter the following details and click <strong>Authorize</strong>.</p>
+        <ol>
+          <li>
+            <p>Authorization Grant Type: Resource Owner</p>
+          </li>
+          <li>
+            <p>Client ID: (the client id received at the application registration)</p>
+          </li>
+          <li>Client Secret: (the client secret received at the application registration)</li>
+          <li>
+            <p>Resource Owner User Name: (username)</p>
+          </li>
+          <li>Resource Owner Password: (password of user)</li>
+          <li>
+            <p>Scope: openid</p>
+          </li>
+          <li>
+            <p>Authorize Endpoint:<a href="https://localhost:9443/oauth2/authorize"> </a>
+              <span>
+                <a href="https://localhost:9443/oauth2/authorize">
+                  <span style="color: rgb(17,85,204);">https://localhost:9443/oauth2/</span>
+                </a>
+                <a href="https://localhost:9443/oauth2/token">token</a>
+              </span>
+            </p>
+            <ac:structured-macro ac:macro-id="d37b81a3-c518-4a72-a66f-bbdbcfe31b7d" ac:name="note" ac:schema-version="1">
+              <ac:rich-text-body>
+                <p>
+                  <span style="color: rgb(0,0,0);">If you have configured the service provider in a tenant, you have to add the tenant domain as a query parameter to the access token endpoint. </span>
+                  <span style="color: rgb(0,0,0);">If the tenant domain is</span>
+                  <a href="http://wso2.com">
+                    <span style="color: rgb(0,0,0);"> </span>
+                    <span style="color: rgb(17,85,204);">wso2.com</span>
+                  </a>
+                  <span style="color: rgb(0,0,0);">, access token endpoint will be as</span>
+                  <span style="color: rgb(0,0,0);">:</span>
+                  <a href="https://localhost:9443/oauth2/token?tenantDomain=wso2.com">
+                    <span style="color: rgb(0,0,0);"> </span>
+                    <span style="color: rgb(17,85,204);">https://localhost:9443/oauth2/token?tenantDomain=wso2.com</span>
+                  </a>
+                </p>
+              </ac:rich-text-body>
+            </ac:structured-macro>
+            <p>
+              <span>
+                <span style="color: rgb(17,85,204);">
+                  <a href="https://localhost:9443/oauth2/token?tenantDomain=wso2.com">
+                    <ac:image ac:height="409" ac:width="624">
+                      <ri:url ri:value="https://lh4.googleusercontent.com/yousffCBc2vlE8kpQEcS7IRV_c1myavSffyvW8esyU3BSZJXK-_vbS_17UAQMk_0RZkEb1rUKQFEQJ5PYT3P8WIvSVUYHmEL7Psv4YfZueKX5q-sD_GTmFKysVUStZut9rr-0uSh"/>
+                    </ac:image>
+                  </a>
+                </span>
+              </span>
+            </p>
+          </li>
+        </ol>
+      </li>
+      <li>At this point, the application receives the Access Token and the encrypted ID Token.<br/>
+        <span style="color: rgb(0,0,0);">
+          <span>
+            <span style="color: rgb(0,0,0);">
+              <ac:image ac:height="505" ac:width="624">
+                <ri:url ri:value="https://lh4.googleusercontent.com/kaFW-O3h0Ua7bst9Ju2s4145epRfCDVO4yAo8X-9FtMfASIbM633Eml1LFVZM7w1z34d1ce7XtkSaX_3_ufMoj0ieM9i-nPi92d9cvFVcnVvWjrhdzbsCq029Ri03G0Bl5pPt8Kp"/>
+              </ac:image>
+            </span>
+          </span>
+          <br/>
+        </span>
+      </li>
+      <li>
+        <p>In order to decrypt the ID Token, you need to provide the private key of the client.</p>
+        <ac:structured-macro ac:macro-id="2464ef3c-81a6-4163-bea2-1b4badc0d61e" ac:name="expand" ac:schema-version="1">
+          <ac:parameter ac:name="title">Click here to know how to Obtain the Service Provider Private Key</ac:parameter>
+          <ac:rich-text-body>
+            <ol>
+              <li>
+                <p>
+                  <span style="color: rgb(0,0,0);">JKS into a PKCS12 formatted store.</span>
+                </p>
+                <ac:structured-macro ac:macro-id="6972a902-e97a-4432-ba3b-fe2a10d01600" ac:name="code" ac:schema-version="1">
+                  <ac:plain-text-body><![CDATA[keytool -importkeystore -srckeystore testkeystore.jks -destkeystore testkeystore.p12 -srcstoretype JKS -deststoretype PKCS12 -srcstorepass wso2carbon -deststorepass wso2carbon -srcalias wso2carbon -destalias wso2carbon -srckeypass wso2carbon -destkeypass wso2carbon]]></ac:plain-text-body>
+                </ac:structured-macro>
+              </li>
+              <li>
+                <p>
+                  <span style="color: rgb(0,0,0);">Extract the private key into a file named “key.pem”.</span>
+                </p>
+                <ac:structured-macro ac:macro-id="69313288-d0a6-49b0-8e45-30b29c621380" ac:name="code" ac:schema-version="1">
+                  <ac:plain-text-body><![CDATA[openssl pkcs12 -in testkeystore.p12 -out key.pem -passin pass:wso2carbon -passout pass:wso2carbon -nodes -nocerts]]></ac:plain-text-body>
+                </ac:structured-macro>
+              </li>
+              <li>
+                <p>
+                  <span style="color: rgb(0,0,0);">Open the created key.pem file using a text editor and you will see the extracted private key. </span>
+                </p>
+              </li>
+              <li>
+                <p>
+                  <span style="color: rgb(0,0,0);">Copy only the key string as shown in the below sample.</span>
+                </p>
+                <p>
+                  <span style="color: rgb(0,0,0);">
+                    <ac:image ac:width="600">
+                      <ri:attachment ri:filename="image2018-2-16_14-8-33.png"/>
+                    </ac:image>
+                  </span>
+                </p>
+              </li>
+            </ol>
+          </ac:rich-text-body>
+        </ac:structured-macro>
+      </li>
+      <li>
+        <p>Paste the copied private key in Client Private Key text area.</p>
+        <p>
+          <span style="color: rgb(0,0,0);">
+            <span>
+              <span style="color: rgb(0,0,0);">
+                <ac:image ac:height="505" ac:width="624">
+                  <ri:url ri:value="https://lh5.googleusercontent.com/uahjH57S8h6ZfWkcSraTjQuB0vKz8gQcwVSU-CR8PbHGrKo7PvazAMR1uCgZ0WaJd0lshh_xNBEXJjzylQZ0bAR0CVkWVYXQkDxXmg2uXQBt-pVDkgLEjw6fSTK-ux0svk-icmBJ"/>
+                </ac:image>
+                <br/>
+              </span>
+            </span>
+          </span>
+        </p>
+      </li>
+      <li>
+        <p>
+          <span style="color: rgb(0,0,0);">Click </span>
+          <strong style="color: rgb(0,0,0);">Decrypt</strong>
+          <span style="color: rgb(0,0,0);"> and the decrypted ID Token details will be displayed.</span>
+        </p>
+        <p>
+          <span style="color: rgb(0,0,0);">
+            <ac:image ac:height="429" ac:width="624">
+              <ri:url ri:value="https://lh6.googleusercontent.com/HjnGJDV-_ans1fcT1VxwANfISLlZQHhFcpCUB_4xD3ScHA4gGXEJY25GyRV55PsfHxUky28ohVOYtr27YS54xHAMMJUOUPWmsNLjEZ9Q2a2EHD0EUlq2GgQ0dlOCEy1FdgTwmGlM"/>
+            </ac:image>
+          </span>
+        </p>
+      </li>
+    </ol>
+  </div>
+</div>

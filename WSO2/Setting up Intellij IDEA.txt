@@ -1,0 +1,13 @@
+# Setting up WSO2 coding standards.
+	Download XML
+		https://sites.google.com/a/wso2.com/engineering/Home/masteringintellijidea
+	Goto Settings -> search "Code Style" -> 
+		Click on gear icon in "Schema" -> Import Schema -> Intellij IDEA code style XML -> Point to downloaded XML
+		Apply
+
+# Installing findbugs plugin
+	Goto Settings -> plugins -> search "Findbugs-IDEA" -> Install
+	Restart IDEA
+	Goto Settings -> Other Settings -> FindBugs-IDEA.
+	Goto Report tab and select “Maximal” for the “Analysis Effort” and “Low” for the “Minimum confidence to report”
+	Apply

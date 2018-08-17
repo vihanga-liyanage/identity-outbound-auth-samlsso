@@ -1,0 +1,161 @@
+Goto http://overthewire.org/wargames/bandit/
+
+	ssh -p 2220 bandit0@bandit.labs.overthewire.org
+	# password bandit0
+
+level 1 boJ9jbbUNNfktd78OOpsqOltutMc3MY1
+
+	Open files starting with a dash
+		cat ./-
+
+level 2 CV1DtqXWVFXTvM2F0k09SHz0YwRINYA9
+
+level 3 UmHadQclWmgdLOKQ3YNgjWxGoRMb5luK
+
+level 4 koReBOKuIDDepwhWk7jZC0RTdopnAYKh
+
+	find /home/ -type f -size 6579c -exec ls {} \;
+	find . -type f -readable -size 1033c ! -executable -exec cat {} \;
+
+level 5 DXjZPULLxYr17uwoI01bNLQbtFemEgo7
+
+	find / -size 33c -readable -group bandit6 -user bandit7 2>/dev/null -exec cat {} \;
+
+level 6 HKBPTKQnIay4Fw76bEy8PVxKEDQRKTzs
+
+level 7 cvX2JJa4CFALtqS87jk27qwqGhBM9plV
+
+	sort data.txt | uniq -u
+
+level 8 UsvVyFSfZZWbi6wgC7dAFyFuR6jQQUhR
+
+	grep -a === data.txt
+	# -a treat binary files as text
+
+level 9 truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
+
+	base64 -d data.txt
+
+level 10 IFukwKGsFW8MOq3IRFqrxE1hxTNEbUPR
+
+	cat data.txt | tr '[A-Za-z]' '[N-ZA-Mn-za-m]'
+
+level 11 5Te8Y4drgCRfCx8ugdwuEX8KFC6k2EUu
+
+	bandit12@bandit:~$ mkdir /tmp/vihanga
+	bandit12@bandit:~$ cp data.txt /tmp/vihanga
+	bandit12@bandit:~$ cd /tmp/vihanga
+	bandit12@bandit:/tmp/vihanga$ ls
+	data.txt
+	bandit12@bandit:/tmp/vihanga$ xxd -r data.txt > data1.txt
+	bandit12@bandit:/tmp/vihanga$ file data1.txt 
+	data1.txt: gzip compressed data, was "data2.bin", last modified: Thu Dec 28 13:34:36 2017, max compression, from Unix
+	bandit12@bandit:/tmp/vihanga$ man gzip
+	bandit12@bandit:/tmp/vihanga$ gzip -d data1.txt
+	gzip: data1.txt: unknown suffix -- ignored
+	bandit12@bandit:/tmp/vihanga$ ls
+	data.txt  data1.txt
+	bandit12@bandit:/tmp/vihanga$ mv data1.txt data.gz
+	bandit12@bandit:/tmp/vihanga$ ls
+	data.gz  data.txt
+	bandit12@bandit:/tmp/vihanga$ gzip -d data.gz 
+	bandit12@bandit:/tmp/vihanga$ ls
+	data  data.txt
+	bandit12@bandit:/tmp/vihanga$ file data
+	data: bzip2 compressed data, block size = 900k
+	bandit12@bandit:/tmp/vihanga$ bzip2 -d data
+	bzip2: Can't guess original name for data -- using data.out
+	bandit12@bandit:/tmp/vihanga$ ls
+	data.out  data.txt
+	bandit12@bandit:/tmp/vihanga$ file data.out 
+	data.out: gzip compressed data, was "data4.bin", last modified: Thu Dec 28 13:34:36 2017, max compression, from Unix
+	bandit12@bandit:/tmp/vihanga$ mv data.out data.gz
+	bandit12@bandit:/tmp/vihanga$ ls
+	data.gz  data.txt
+	bandit12@bandit:/tmp/vihanga$ gzip -d data.gz 
+	bandit12@bandit:/tmp/vihanga$ ls
+	data  data.txt
+	bandit12@bandit:/tmp/vihanga$ file data
+	data: POSIX tar archive (GNU)
+	bandit12@bandit:/tmp/vihanga$ tar vfx data
+	data5.bin
+	bandit12@bandit:/tmp/vihanga$ file data5.bin 
+	data5.bin: POSIX tar archive (GNU)
+	bandit12@bandit:/tmp/vihanga$ tar vfx data5.bin 
+	data6.bin
+	bandit12@bandit:/tmp/vihanga$ file data6.bin 
+	data6.bin: bzip2 compressed data, block size = 900k
+	bandit12@bandit:/tmp/vihanga$ bzip2 -d data6.bin
+	bzip2: Can't guess original name for data6.bin -- using data6.bin.out
+	bandit12@bandit:/tmp/vihanga$ ls
+	data  data.txt  data5.bin  data6.bin.out
+	bandit12@bandit:/tmp/vihanga$ file data6.bin.out 
+	data6.bin.out: POSIX tar archive (GNU)
+	bandit12@bandit:/tmp/vihanga$ tar vfx data6.bin.out 
+	data8.bin
+	bandit12@bandit:/tmp/vihanga$ file data8.bin 
+	data8.bin: gzip compressed data, was "data9.bin", last modified: Thu Dec 28 13:34:36 2017, max compression, from Unix
+	bandit12@bandit:/tmp/vihanga$ gzip -d data9.bin
+	gzip: data9.bin.gz: No such file or directory
+	bandit12@bandit:/tmp/vihanga$ mv data8.bin data8.bin.gz
+	bandit12@bandit:/tmp/vihanga$ ls
+	data  data.txt  data5.bin  data6.bin.out  data8.bin.gz
+	bandit12@bandit:/tmp/vihanga$ gzip -d data8.bin.gz 
+	bandit12@bandit:/tmp/vihanga$ ls
+	data  data.txt  data5.bin  data6.bin.out  data8.bin
+	bandit12@bandit:/tmp/vihanga$ file data8.bin 
+	data8.bin: ASCII text
+	bandit12@bandit:/tmp/vihanga$ cat data8.bin 
+	The password is 8ZjyCRiBWFYkneahHwxCv3wb2a1ORpYL
+
+level 12 8ZjyCRiBWFYkneahHwxCv3wb2a1ORpYL
+
+	ssh -i sshkey.private bandit14@127.0.0.1 -p 22
+
+level 13 4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e
+
+	telnet 127.0.0.1 30000
+	# then paste the previous pw and hit enter
+
+level 14 BfMYroe26WYalil77FoDi9qh59eK5xNr
+
+	openssl s_client -ign_eof -connect 127.0.0.1:30001
+
+level 15 cluFn7wTiGryunymYOu4RcffSxQluehd
+
+	nmap localhost -p 31000-32000 -sV -v
+	# Last -v gives a verbose output
+
+	PORT      STATE SERVICE     VERSION
+	31046/tcp open  echo
+	31518/tcp open  ssl/echo
+	31691/tcp open  echo
+	31790/tcp open  ssl/unknown -> what we need
+	31960/tcp open  echo
+
+	# send the pw to the port, will give a private key
+	# log out, create a new file in your pc (key) and paste it
+	# make permissions to 400
+	ssh -i key bandit17@bandit.labs.overthewire.org -p 2220
+
+level 18 kfBf3eYk5BPBRzwjqutbbfE887SVc5Yd
+
+	# Logs you out immediatly, this is normal
+	ssh -i key bandit18@bandit.labs.overthewire.org -p 2220 'cat readme'
+
+level 19 IueksS7Ubh8G3DCwVzrTd8rAVOwq3M5x
+
+	bandit19@bandit:~$ ls -al
+	total 28
+	drwxr-xr-x  2 root     root     4096 Dec 28 14:34 .
+	drwxr-xr-x 29 root     root     4096 Dec 28 14:34 ..
+	-rw-r--r--  1 root     root      220 Sep  1  2015 .bash_logout
+	-rw-r--r--  1 root     root     3771 Sep  1  2015 .bashrc
+	-rw-r--r--  1 root     root      655 Jun 24  2016 .profile
+	-rwsr-x---  1 bandit20 bandit19 7408 Dec 28 14:34 bandit20-do
+
+	# Notice the 's' in permissions. This says we can execute this command with the permissions of the owner of the script. i.e. bandit20
+
+	./bandit20-do cat /etc/bandit_pass/bandit20
+
+level 20 GbKksEFF4yrVs6il55v6gwY5aVje5f0j
