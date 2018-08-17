@@ -17,8 +17,13 @@ git clone $BASE_URL
 # split url by /
 IFS=\/ arr=($BASE_URL)
 
-echo cd ${arr[4]::-4}
-cd ${arr[4]::-4}
+if [[ ${arr[4]} = *".git"* ]]; then
+ 	echo cd ${arr[4]::-4}
+ 	cd ${arr[4]::-4}
+else
+	echo cd ${arr[4]}
+	cd ${arr[4]}
+fi
 
 # reset IFS
 IFS=#
