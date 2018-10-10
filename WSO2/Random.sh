@@ -44,3 +44,10 @@
 # Start server with SSL logs enables
 #==============================================================================================================
 	./bin/wso2server.sh -Djavax.net.debug=ssl,handshake
+
+# Turn off CSRF check
+#==============================================================================================================
+	# Open file repository/conf/security/Owasp.CsrfGuard.Carbon.properties
+	subl repository/conf/security/Owasp.CsrfGuard.Carbon.properties
+	# Cahnge the property org.owasp.csrfguard.Enabled to false.
+	
